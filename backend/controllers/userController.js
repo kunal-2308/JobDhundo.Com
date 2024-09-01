@@ -1,9 +1,10 @@
 let userCollection = require('../models/userModel');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
-let cookieParser = require('cookie-parser')
-// Register user --> AUTH/LOGIN not required
-export const register = async (req, res) => {
+let cookieParser = require('cookie-parser');
+
+
+const register = async (req, res) => {
     try {
         let { name, email, phone, password, role } = req.body;
 
@@ -44,7 +45,7 @@ export const register = async (req, res) => {
         //send the response if the user created successfully
         if (response) {
             res.status(200).json({
-                message: "User Created Successfully!",
+                message: "Account Created Successfully!",
                 success: true,
             });
         }
@@ -57,7 +58,7 @@ export const register = async (req, res) => {
     }
 };
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
     try {
         let { email, password, role } = req.body;
 
@@ -98,27 +99,27 @@ export const login = async (req, res) => {
         }
 
         user = {
-            _id:user._id,
-            name:user.name,
-            email:user.email,
-            phone:user.phone,
-            role:user.role,
-            profile:user.profile
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            profile: user.profile
         }
 
         //Once this layers are passed --> then everything is create login the user and create a token
-        const token =  jwt.sign({ _id: user._id },process.env.SECRET_KEY);
+        const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
         const maxAge = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
         //once cookie is created whole process is done:
-        return res.status(200).cookie('jwt_login',token,{
+        return res.status(200).cookie('jwt_login', token, {
             maxAge: maxAge,
-            httpOnly:true,
-            sameSite:'strict'
+            httpOnly: true,
+            sameSite: 'strict'
         }).json({
-            message:`Welcome Back ${user.name}`,
+            message: `Welcome Back ${user.name}`,
             user,
-            success:true
+            success: true
         });
 
     } catch (error) {
@@ -130,14 +131,14 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = async(req,res) =>{
+const logout = async (req, res) => {
     try {
-       //clear cookie :
-       res.status(200).clearCookie('jwt_login').json({
-        message:"Logged Out Successfully",
-        success:true
-       });
-       
+        //clear cookie :
+        res.status(200).clearCookie('jwt_login').json({
+            message: "Logged Out Successfully",
+            success: true
+        });
+
     } catch (error) {
         res.status(500).json({
             message: "Server Error",
@@ -146,3 +147,94 @@ export const logout = async(req,res) =>{
         });
     }
 }
+
+
+const updateUser = async (req, res) => {
+    try {
+        const { name, email, phone, bio, skills } = req.body;
+        let file = req.file;
+        if (!name || !email || !phone || !bio || !skills) {
+            return res.status(400).json({
+                message: "Something is missing",
+                success: false
+            });
+        }
+
+        //cloudinary setup :
+
+
+
+        //Now the skills will be in string format: Convert it to array
+        let skillsArray = skills.split(',');
+
+        //using middleware : Authentication
+        let userEmail = req.email;
+
+        let user = await userCollection.findOne({ "email": userEmail });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "User Not found",
+                success: false,
+            });
+        }
+
+        //update the user document;
+        user.name = name;
+        user.email = email;
+        user.phone = phone,
+            user.profile.bio = bio;
+        user.profile.skills = skillsArray;
+
+        //resume section :
+
+
+
+        //Now save this updated data to the database:
+        await user.save();
+
+        //check for updated data:
+        user = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            profile: user.profile
+        }
+
+        return res.status(200).json({
+            message: "Profile Updated Successfully",
+            user,
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+}
+
+
+
+const deleteUser = async (req, res) => {
+    try {
+        await res.clearCookie('jwt_login');
+        let userEmail = req.email;
+        let response = await userCollection.findOneAndDelete({ "email": userEmail });
+        return res.status(200).json({
+            message: "Account Deleted Successfully",
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+}
+
+module.exports = { register,login,updateUser,logout,deleteUser};
