@@ -151,9 +151,9 @@ const logout = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { name, email, phone, bio, skills } = req.body;
+        const { name, email, phone, bio, skills, replaceSkills } = req.body;
         let file = req.file;
-        if (!name || !email || !phone || !bio || !skills) {
+        if (!name || !email || !phone || !bio) {
             return res.status(400).json({
                 message: "Something is missing",
                 success: false
@@ -165,7 +165,11 @@ const updateUser = async (req, res) => {
 
 
         //Now the skills will be in string format: Convert it to array
-        let skillsArray = skills.split(',');
+        let skillsArray;
+        if (skills) {
+            skillsArray = skills.split(',');
+        }
+
 
         //using middleware : Authentication
         let userEmail = req.email;
@@ -183,12 +187,20 @@ const updateUser = async (req, res) => {
         user.name = name;
         user.email = email;
         user.phone = phone,
-            user.profile.bio = bio;
-        user.profile.skills = skillsArray;
+        user.profile.bio = bio;
+
+        //during frontEnd keep it properly as by default false
+        // And then add seetting to change it by making it true
+        if (skills) {
+            if (replaceSkills) {
+                user.profile.skills = skillsArray;
+            } else {
+                user.profile.skills = user.profile.skills.concat(skillsArray)
+            }
+        }
+
 
         //resume section :
-
-
 
         //Now save this updated data to the database:
         await user.save();
@@ -237,4 +249,4 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { register,login,updateUser,logout,deleteUser};
+module.exports = { register, login, updateUser, logout, deleteUser };
