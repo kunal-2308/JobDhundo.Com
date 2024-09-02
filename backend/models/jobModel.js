@@ -31,18 +31,18 @@ const jobSchema = new mongoose.Schema({
         required:true
     },
     company : {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref:'Company',
         required:true,
     },
     contactPerson :{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref:'User',
         required:true,
     }, //This will store the ibejct ID of the Recruiter
     applications:[
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: 'Application',
         }
     ] //this will hold the list of applicants rather their object ID of application

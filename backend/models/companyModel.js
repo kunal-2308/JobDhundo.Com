@@ -5,6 +5,7 @@ const companySchema = new mongoose.Schema({
     companyName : {
         type:String,
         required:true,
+        unique:true
     },
     description:{
         type:String,
@@ -13,11 +14,11 @@ const companySchema = new mongoose.Schema({
         type:String,
     },
     logo:{
-        type:String,
-        required:true, //url to company logo
+        type:String, //url to company logo ---> Will be implemented using cloudinary
+        
     },
-    userId : { //stores the objectID who created this Company Recruitment
-        type:mongoose.Schema.Types.ObjectId,
+    userEmail : { //stores the email who created this Company Recruitment
+        type:String,
         ref:'User',
         required:true,
     }

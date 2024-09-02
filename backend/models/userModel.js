@@ -48,9 +48,9 @@ const userScehma = new mongoose.Schema({
             type: String
         },
         company: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: 'Company'
-             //this shows the reference to the company and will store the objectID of company 
+            //this shows the reference to the company and will store the Name of company 
         },
         profilePhoto : {
             type:String,

@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 5000 ;
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/userRoutes');
+const companyRouter = require('./routes/companyRoutes');
 
 //middlewares:
 let app = express();
@@ -21,7 +22,7 @@ app.use(cookieParser());
 //api's:
 //Example Routes : "localhost:8000/api/v1/user/register" ---> Register
 app.use("/api/v1/user",userRouter);
-
+app.use("/api/v1/company",companyRouter);
 
 app.listen(PORT,(error)=>{
   connectToMongo();
