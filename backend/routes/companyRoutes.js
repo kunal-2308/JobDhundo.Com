@@ -1,5 +1,5 @@
 let express = require('express');
-const { registerCompany, getCompany, getCompanybyName, updateCompany, deleteCompany } = require('../controllers/comanyController');
+const { registerCompany, getCompany, getCompanybyName, updateCompany, deleteCompany } = require('../controllers/companyController');
 let companyRouter = new express.Router();
 let auth = require('../middleware/auth');
 

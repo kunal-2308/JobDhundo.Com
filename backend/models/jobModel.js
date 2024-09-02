@@ -3,6 +3,10 @@ let mongoose = require('mongoose');
 let validator = require('validator');
 
 const jobSchema = new mongoose.Schema({
+    category : {
+        type:String,
+        required:true,
+    },
     title:{
         type:String,
         required:true
@@ -32,18 +36,16 @@ const jobSchema = new mongoose.Schema({
     },
     company : {
         type: String,
-        ref:'Company',
         required:true,
     },
     contactPerson :{
         type: String,
-        ref:'User',
         required:true,
     }, //This will store the ibejct ID of the Recruiter
     applications:[
         {
-            type: String,
-            ref: 'Application',
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'Application'
         }
     ] //this will hold the list of applicants rather their object ID of application
 },{timestamps:true});

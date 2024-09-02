@@ -1,8 +1,6 @@
 let userCollection = require('../models/userModel');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
-let cookieParser = require('cookie-parser');
-
 
 const register = async (req, res) => {
     try {
@@ -228,8 +226,6 @@ const updateUser = async (req, res) => {
         });
     }
 }
-
-
 
 const deleteUser = async (req, res) => {
     try {
