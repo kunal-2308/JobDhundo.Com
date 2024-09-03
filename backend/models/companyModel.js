@@ -16,13 +16,12 @@ const companySchema = new mongoose.Schema({
     logo:{
         type:String, //url to company logo ---> Will be implemented using cloudinary
         
-    },
-    userEmail : { //stores the email who created this Company Recruitment
-        type:String,
+    }, 
+    createdBy : { //stores the email who created this Company Recruitment
+        type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true,
     }
-
 },{timestamps:true});
 
 let companyModel = new mongoose.model('Company',companySchema);

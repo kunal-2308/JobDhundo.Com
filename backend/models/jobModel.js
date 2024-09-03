@@ -35,11 +35,13 @@ const jobSchema = new mongoose.Schema({
         required:true
     },
     company : {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Company',
         required:true,
-    },
+    }, //this will store the object Id of the company 
     contactPerson :{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'User',
         required:true,
     }, //This will store the ibejct ID of the Recruiter
     applications:[

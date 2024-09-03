@@ -47,18 +47,18 @@ const userScehma = new mongoose.Schema({
         resumeName: {
             type: String
         },
-        company: {
-            type: String,
+        company: [{
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
-            //this shows the reference to the company and will store the Name of company 
-        },
-        profilePhoto : {
-            type:String,
-            default:""
+            //this shows the reference to the company and will store the Id of the company
+        }],
+        profilePhoto: {
+            type: String,
+            default: "" //take from cloudinary
         }
     }
-},{timestamps:true});
+}, { timestamps: true });
 
-const userModel = new mongoose.model('User',userScehma);
+const userModel = new mongoose.model('User', userScehma);
 module.exports = userModel;
 
