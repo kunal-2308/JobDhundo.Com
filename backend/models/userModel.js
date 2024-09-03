@@ -47,10 +47,10 @@ const userScehma = new mongoose.Schema({
         resumeName: {
             type: String
         },
-        company: [{
+        appliedJobs: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Company'
-            //this shows the reference to the company and will store the Id of the company
+            ref: 'Application'
+            //this shows the reference to the Application and will store the Id of the Application
         }],
         profilePhoto: {
             type: String,

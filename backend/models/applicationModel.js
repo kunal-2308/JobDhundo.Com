@@ -18,7 +18,7 @@ const applicationSchema = new mongoose.Schema({
         enum : ['Pending','Selected','Rejected'],
         default:'Pending'
     }
-},{timestamps:true});
+},{timestamps:true}); 
 
 let applicationModel = new mongoose.model('Application',applicationSchema);
 module.exports = applicationModel;
