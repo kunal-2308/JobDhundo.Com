@@ -19,8 +19,8 @@ let authenticate = async (req, res, next) => {
                 success: false,
             });
         }
-        let userEmail = decodeToken.email;
-        req.email = userEmail;
+        let userId = decodeToken._id;
+        req.id = userId;
 
         next();
     } catch (error) {

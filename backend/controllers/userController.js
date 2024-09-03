@@ -76,7 +76,7 @@ const login = async (req, res) => {
             });
         }
 
-        //if user exists with this email :
+        //if user does not exists with this email :
         let pepperPassword = password + process.env.PEPPER;
 
         //now compare this password with the database password:
@@ -85,7 +85,7 @@ const login = async (req, res) => {
             return res.status(400).json({
                 message: "Incorrect Password",
                 success: false
-            })
+            });
         }
 
         //now compare the role with DB Role :
@@ -106,7 +106,7 @@ const login = async (req, res) => {
         }
 
         //Once this layers are passed --> then everything is create login the user and create a token
-        const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
+        const token = jwt.sign({ _id:user._id }, process.env.SECRET_KEY);
         const maxAge = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
         //once cookie is created whole process is done:
@@ -170,9 +170,9 @@ const updateUser = async (req, res) => {
 
 
         //using middleware : Authentication
-        let userEmail = req.email;
+        let userId = req.id;
 
-        let user = await userCollection.findOne({ "email": userEmail });
+        let user = await userCollection.findOne({"_id": userId});
 
         if (!user) {
             return res.status(400).json({
@@ -196,7 +196,6 @@ const updateUser = async (req, res) => {
                 user.profile.skills = user.profile.skills.concat(skillsArray)
             }
         }
-
 
         //resume section :
 
@@ -230,8 +229,14 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         await res.clearCookie('jwt_login');
-        let userEmail = req.email;
-        let response = await userCollection.findOneAndDelete({ "email": userEmail });
+        let userId = req.id;
+        let response = await userCollection.findOneAndDelete({ "_id": userId });
+        if(!response){
+            return res.status(400).json({
+                message:"User not found",
+                success : false,
+            });
+        }
         return res.status(200).json({
             message: "Account Deleted Successfully",
             success: true,
