@@ -24,7 +24,7 @@ const registerCompany = async (req, res) => {
         //Create New Company Document
         let newCompany = new companyCollection({
             companyName: Name,
-            userEmail: req.email,
+            createdBy: req.id,
         });
 
         let response = await newCompany.save();
@@ -49,11 +49,11 @@ const registerCompany = async (req, res) => {
     }
 }
 
-const getCompany = async (req, res) => {
+const getCompany = async (req, res) => { //from perspetive of the Recruiter
     try {
-        let userEmail = req.email;
+        let userId = req.id;
 
-        let companyList = await companyCollection.find({ userEmail });
+        let companyList = await companyCollection.find({ "createdBy" : userId });
 
         if (companyList.length === 0) {
             return res.status(400).json({
@@ -61,7 +61,7 @@ const getCompany = async (req, res) => {
                 success: false,
             });
         }
-
+        
         return res.status(200).json({
             message: "Registered Companies List",
             companyList,
@@ -159,6 +159,7 @@ const deleteCompany = async (req, res) => {
 
         return res.status(200).json({
             message: `${companyName} Deleted Successfully!`,
+            company,
             success: true,
         });
 
