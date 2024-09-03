@@ -4,9 +4,9 @@ let companyCollection = require('../models/companyModel');
 
 const postJob = async (req, res) => {
     try {
-        const { category ,title, description, requirements, salary, location, jobType, position, companyName } = req.body;
-        let userEmail = req.email;
-        if (!category || !title || !description || !requirements || !salary || !location || !jobType || !position || !companyName) {
+        const { category, title, description, requirements, salary, experience, location, jobType, position, companyId } = req.body;
+        let userId = req.id;
+        if (!category || !title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !companyId) {
             return res.status(400).json({
                 message: "Something is missing",
                 success: false,
@@ -22,9 +22,10 @@ const postJob = async (req, res) => {
             salary,
             location,
             jobType,
+            experience,
             position,
-            company: companyName,
-            contactPerson: userEmail,
+            company: companyId,
+            contactPerson: userId,
         });
 
         //Now save the document :
@@ -46,9 +47,9 @@ const postJob = async (req, res) => {
 
 const getallAdminPost = async (req, res) => {
     try {
-        let userEmail = req.email;
+        let userId = req.id;
 
-        let jobList = await jobCollection.find({ "contactPerson": userEmail });
+        let jobList = await jobCollection.find({ "contactPerson": userId });
 
         if (jobList.length === 0) {
             return res.status(400).json({
@@ -74,46 +75,33 @@ const getallAdminPost = async (req, res) => {
 
 const getAllStudentPost = async (req, res) => {
     try {
-        let jobList = await jobCollection.find({});
+        let keyword = req.query.keyword || "";
 
-        if (jobList.length === 0) {
-            return res.status(400).json({
-                message: "No Jobs Available",
-                success: false,
-            })
+        let query = {
+            $or: [
+                { "title": { $regex: keyword, $options: "i" } },
+                { "description": { $regex: keyword, $options: "i" } },
+                { "category": { $regex: keyword, $options: "i" } },
+                {"requirements" : {$regex : keyword,$options:"i"}},
+            ]
         }
-        return res.status(200).json({
-            message: "Overall Job List",
-            jobList,
-            success: true
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Server Error",
-            error: error.message,
-            success: false
-        });
-    }
-}
 
-const getJobByName = async (req, res) => {
-    try {
-        let title = req.params.title;
+        const jobList = await jobCollection.find(query).populate({
+            path:"company"
+        }).populate({path:'contactPerson'}).sort({createdAt:-1});
 
-        let getJob = await jobCollection.find({ "title": title });
-        if (getJob.length===0) {
+        if(jobList.length===0){
             return res.status(400).json({
-                message: `Job Role : ${title} does not exist!`,
-                success: false,
+                message : "Job not found",
+                success:false,
             });
         }
 
         return res.status(200).json({
-            message: "Congratulations! Job Match Found",
-            getJob,
-            success: true,
-        })
-
+            message:"Congratulations! Job Match Found",
+            success:true,
+            jobList
+        });
     } catch (error) {
         res.status(500).json({
             message: "Server Error",
@@ -123,4 +111,5 @@ const getJobByName = async (req, res) => {
     }
 }
 
-module.exports = { postJob, getallAdminPost, getAllStudentPost,getJobByName};
+
+module.exports = { postJob, getallAdminPost, getAllStudentPost};
