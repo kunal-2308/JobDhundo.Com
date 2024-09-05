@@ -112,4 +112,47 @@ const getAllStudentPost = async (req, res) => {
 }
 
 
-module.exports = { postJob, getallAdminPost, getAllStudentPost};
+const updateJob = async(req,res) =>{
+    try {
+        let jobId = req.params.jobid;
+        let {description,salary,experience,location,jobType,position} = req.body;
+    
+        if(!description || !salary || !experience || !location || !jobType || !position){
+            return res.status(400).json({
+                message : "Something is missing",
+                success:false,
+            });
+        }
+    
+        let updatedData = {
+            description,
+            salary,
+            experience,
+            location,
+            jobType,
+            position
+        }
+    
+        let updatedJob = await jobCollection.findByIdAndUpdate({_id:jobId},{$set:updatedData},{
+            new:true,
+        });
+    
+        if (updatedJob) {
+            return res.status(200).json({
+                message : "Job updated successfully",
+                updatedJob,
+                success:true,
+            })
+        }
+    
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+    
+}
+
+module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob};

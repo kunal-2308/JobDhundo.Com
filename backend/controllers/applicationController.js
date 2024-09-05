@@ -98,7 +98,7 @@ const getAllAppliedJobs = async (req, res) => {
 }
 
 
-const viewApplicants = async(req,res) =>{
+const viewApplicants = async(req,res) =>{ //provide jobid to get the idea about the list of applicants registered to that particular job
     try {
         let jobId = req.params.jobid;
 
@@ -106,7 +106,7 @@ const viewApplicants = async(req,res) =>{
             path:'applications',
             options:{sort:{createdAt:-1}},
             path:'applicant'
-        });
+        }).sort({createdAt:-1});
 
         if(!applications){
             return res.status(400).json({
@@ -128,4 +128,49 @@ const viewApplicants = async(req,res) =>{
     }
 }
 
-module.exports = { applyJob,getAllAppliedJobs,viewApplicants };
+const updateStatus = async (req, res) => {
+    try {
+        const {status} = req.body;
+        if(!status){
+            return res.status(400).json({
+                message : "Status is missing",
+                success:true,
+            });
+        }
+        const applicationId = req.params.id;
+    
+        let updatedApplication = await applicationCollection.findOneAndUpdate({"_id" : applicationId},
+        {$set : {status}},{new:true}).populate({
+            path:'job',
+            sort:{createdAt:-1},
+            populate:{
+                path:'company'
+            }
+        }).populate({
+            path:'applicant',
+           
+        }).sort({createdAt:-1});
+    
+        if(!updatedApplication){
+            return res.status(400).json({
+                message : "Application not found",
+                success:true,
+            });
+        }
+    
+        return res.status(200).json({
+            "message" : "Status updated successfully",
+            updatedApplication,
+            success:true
+        });
+    
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+}
+
+module.exports = { applyJob,getAllAppliedJobs,viewApplicants,updateStatus };
