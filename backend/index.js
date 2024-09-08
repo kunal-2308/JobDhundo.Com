@@ -9,16 +9,21 @@ const userRouter = require('./routes/userRoutes');
 const companyRouter = require('./routes/companyRoutes');
 const jobRouter = require('./routes/jobRoutes');
 const applicationRouter = require('./routes/applicationRoutes');
-
+const allowedOrigins = ['http://localhost:8000', 'http://localhost:5173'];
 //middlewares:
 let app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
-let corsOption = {
-  origin:"http://localhost:3000",
-  credentials:true,
-}
-app.use(cors(corsOption));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // Allow credentials
+}));
 app.use(cookieParser());
 
 

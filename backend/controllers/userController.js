@@ -1,14 +1,16 @@
 let userCollection = require('../models/userModel');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
+const { singleUpload } = require('../middleware/multer');
 
 const register = async (req, res) => {
     try {
         let { name, email, phone, password, role } = req.body;
-
         // Check if all required fields are present
         if (!name || !email || !phone || !password || !role) {
+            
             return res.status(400).json({
+               
                 message: "Something is missing",
                 success: false,
             });
