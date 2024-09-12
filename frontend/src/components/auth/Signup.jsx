@@ -5,7 +5,9 @@ import axios from 'axios';
 import { USER_API_BASE_URL } from '@/utils/constant';
 
 import { toast } from 'sonner';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoading } from '@/redux/slices/authSlice';
+import { Loader2 } from 'lucide-react';
 
 function Signup() {
   const [inputData, setData] = useState({
@@ -18,6 +20,8 @@ function Signup() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loadingVal = useSelector((state) => state.authSlice.loading);
 
   const setDataHandler = (e) => {
     setData({ ...inputData, [e.target.name]: e.target.value });
@@ -28,6 +32,7 @@ function Signup() {
   }
 
   const submitHandler = async (e) => {
+    dispatch(setLoading(true));
     e.preventDefault();
     let formData = new FormData;
     formData.append("name", inputData.name);
@@ -54,7 +59,11 @@ function Signup() {
       }
 
     } catch (error) {
+      dispatch(setLoading(true));
       console.log(error);
+    }
+    finally{
+      dispatch(setLoading(false));
     }
   }
   return (
@@ -183,12 +192,18 @@ function Signup() {
               </div>
             </div>
 
-            <button
+            {loadingVal ? <button
+              type="submit"
+              className="w-full py-3 bg-brown-600 text-white font-semibold rounded-lg hover:shadow-lg transition duration-300 bg-red-800 flex flex-row justify-center items-center gap-2"
+            >
+              <Loader2 className="h-4 w-4 font-bold animate-spin"></Loader2>
+              Please wait
+            </button> : <button
               type="submit"
               className="w-full py-3 bg-brown-600 text-white font-semibold rounded-lg hover:shadow-lg transition duration-300 bg-red-800"
             >
               Signup
-            </button>
+            </button>}
 
             <div className="mt-4 flex justify-center">
               <span className="text-gray-600">

@@ -6,46 +6,58 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { USER_API_BASE_URL } from "@/utils/constant";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/slices/authSlice";
+import { Loader2 } from "lucide-react";
+import {updateLoginStatus} from '../../redux/slices/userLoggedInSlice';
 
 function Loginpage() {
- let [inputData,setData] = useState({
-  email:"",
-  password:"",
-  role:"",
- });
+  let [inputData, setData] = useState({
+    email: "",
+    password: "",
+    role: "",
+  });
 
- let setChangeData = (e) =>{
-  setData({...inputData,[e.target.name]:e.target.value})
- };
+  let setChangeData = (e) => {
+    setData({ ...inputData, [e.target.name]: e.target.value })
+  };
 
- let handleRoleChange = (e) => {
-  setData({ ...inputData, role:e.target.value });
-};
+  let handleRoleChange = (e) => {
+    setData({ ...inputData, role: e.target.value });
+  };
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loadingVal = useSelector((state) => state.authSlice.loading);
 
- let handleSubmit = async(e) =>{
-  e.preventDefault();
-  try {
-    let loginUser = await axios.post(`${USER_API_BASE_URL}/login`,inputData,{
-      headers:{
-        "Content-Type":'application/json',
-      },
-      withCredentials:true,
-    });
 
-    if(loginUser.data.success){
-      navigate('/');
-      toast.success(loginUser.data.message);
+  let handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(setLoading(true));
+      let loginUser = await axios.post(`${USER_API_BASE_URL}/login`, inputData, {
+        headers: {
+          "Content-Type": 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      if (loginUser.data.success) {
+        dispatch(updateLoginStatus(true));
+        navigate('/');
+        toast.success(loginUser.data.message);
+      }
+      else {
+        toast.error(loginUser.data.message);
+      }
+    } catch (error) {
+      dispatch(setLoading(true));
+      toast.error(error.response.data.message)
     }
-    else{
-      toast.error(loginUser.data.message);
+    finally {
+      dispatch(setLoading(false));
     }
-
-  } catch (error) {
-    toast.error(error.response.data.message)
   }
- }
 
   return (
     <>
@@ -105,11 +117,11 @@ const navigate = useNavigate();
 
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem
-                   name="role"
-                   value="Student"
+                    name="role"
+                    value="Student"
                     id="r1"
                     className="appearance-none w-4 h-4 border border-gray-400 rounded-full checked:bg-indigo-600 checked:ring-2 checked:ring-indigo-500 focus:ring-2 focus:ring-indigo-500"
-                    onClick = {handleRoleChange}
+                    onClick={handleRoleChange}
                   />
                   <Label htmlFor="r1" className="text-base font-semibold text-slate-600">Student</Label>
                 </div>
@@ -120,19 +132,30 @@ const navigate = useNavigate();
                     value="Recruiter"
                     id="r2"
                     className="appearance-none w-4 h-4 border border-gray-400 rounded-full checked:bg-indigo-600 checked:ring-2 checked:ring-indigo-500 focus:ring-2 focus:ring-indigo-500"
-                    onClick = {handleRoleChange}
+                    onClick={handleRoleChange}
                   />
                   <Label htmlFor="r2" className="text-base font-semibold text-slate-600">Recruiter</Label>
                 </div>
               </RadioGroup>
             </div>
 
-            <button
+            {loadingVal ? <button
+              type="submit"
+              className="w-full py-3 bg-brown-600 text-white font-semibold rounded-lg hover:shadow-lg transition duration-300 bg-red-800 flex flex-row justify-center items-center gap-2"
+            >
+              <Loader2 className="h-4 w-4 font-bold animate-spin"></Loader2>
+              Please wait
+            </button> : <button
               type="submit"
               className="w-full py-3 bg-brown-600 text-white font-semibold rounded-lg hover:shadow-lg transition duration-300 bg-red-800"
             >
               Login
-            </button>
+            </button>}
+
+            
+           
+            
+
 
             <div className="mt-4 flex justify-center">
               <span className="text-gray-600">
