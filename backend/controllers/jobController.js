@@ -111,6 +111,44 @@ const getAllStudentPost = async (req, res) => {
     }
 }
 
+const getAllJobPost = async (req, res) => {
+    try {
+        let keyword = req.query.keyword || "";
+
+        let query = {
+            $or: [
+                { "title": { $regex: keyword, $options: "i" } },
+                { "description": { $regex: keyword, $options: "i" } },
+                { "category": { $regex: keyword, $options: "i" } },
+                {"requirements" : {$regex : keyword,$options:"i"}},
+            ]
+        }
+
+        const jobList = await jobCollection.find(query).populate({
+            path:"company"
+        }).populate({path:'contactPerson'}).sort({createdAt:-1});
+
+        if(jobList.length===0){
+            return res.status(400).json({
+                message : "Job not found",
+                success:false,
+            });
+        }
+
+        return res.status(200).json({
+            message:"Congratulations! Job Match Found",
+            success:true,
+            jobList
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+}
+
 
 const updateJob = async(req,res) =>{
     try {
@@ -155,4 +193,4 @@ const updateJob = async(req,res) =>{
     
 }
 
-module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob};
+module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob, getAllJobPost};

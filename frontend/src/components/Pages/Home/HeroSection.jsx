@@ -28,7 +28,7 @@ function HeroSection() {
             />
             <button
               type="submit"
-              className="w-[80px] h-full bg-red-800 flex justify-center items-center rounded-r-full hover:bg-red-700"
+              className="w-[80px] h-full bg-red-800 flex justify-center items-center rounded-r-full hover:bg-red-900"
             >
               <Search className='text-white font-semibold text-lg'></Search>
             </button>
