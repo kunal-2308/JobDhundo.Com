@@ -1,6 +1,5 @@
 import React from 'react'
-import Card from './Card'
-import FilterCard from './FilterCard';
+import Card from '../Jobs/Card'
 
 function JobContainer() {
     let jobArray = [
@@ -151,7 +150,7 @@ function JobContainer() {
             "createdAt": "2024-09-03T16:25:11.738Z",
             "updatedAt": "2024-09-05T14:58:56.573Z",
             "__v": 0
-        }, 
+        },
         {
             "_id": "66d738672415d637f4a60256",
             "category": "Machine learning",
@@ -194,12 +193,11 @@ function JobContainer() {
     ];
     return (
         <>
-         <div className="div-main-results w-full mt-20 ml-44">
+            <div className="div-main-results w-full mt-20 ml-44">
                 <span className='font-bold text-xl'>Search Results ({jobArray.length})</span>
-        </div>
-        <div className='flex p-10 items-start gap-20 ml-20'>
-              <FilterCard/>
-                <div className="main-container grid grid-cols-2">
+            </div>
+            <div className="main-container flex justify-center mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {
                         jobArray.map((ele, index) => {
                             return <Card jobDetails={ele} key={index}></Card>
@@ -207,9 +205,8 @@ function JobContainer() {
                     }
                 </div>
             </div>
-
         </>
-    )
+    );
 }
 
 export default JobContainer

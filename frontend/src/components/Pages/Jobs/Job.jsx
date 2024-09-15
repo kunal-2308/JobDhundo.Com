@@ -1,14 +1,12 @@
 import Navbar from '@/components/shared/Navbar'
 import React from 'react'
-import Results from './Results'
 import JobContainer from './JobContainer'
 
 function Job() {
   return (
     <>
-    <div className="div">
+    <div className="div w-auto">
     <Navbar/>
-    <Results/> {/*Send Props for total Length */}
     <JobContainer/>
     </div>
   

@@ -33,7 +33,7 @@ function FilterCard() {
           {
             cardArray.map((ele, index) => {
               return (
-                <div className='div-1-filter-head mt-5' key={index}>
+                <div className='div-1-filter-head mt-6' key={index}>
                   <span className='font-bold text-xl'>{ele.name}</span>
                   <div className="div-2-filter-content mt-3">
                     <RadioGroup defaultValue="All">
@@ -41,7 +41,7 @@ function FilterCard() {
                         return (
                           <div className='filter-radio-items' key={radioIndex}>
                             <RadioGroupItem value={item} className='mr-1' />
-                            <Label htmlFor={item} className='text-base font-medium text-slate-600'>{item}</Label>
+                            <Label htmlFor={item} className='text-[14px] font-semibold text-slate-600'>{item}</Label>
                           </div>
                         );
                       })}
