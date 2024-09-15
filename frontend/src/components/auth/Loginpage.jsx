@@ -7,9 +7,9 @@ import axios from "axios";
 import { USER_API_BASE_URL } from "@/utils/constant";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "@/redux/slices/authSlice";
+import { setLoading } from "@/redux/slices/Loading";
 import { Loader2 } from "lucide-react";
-import {updateLoginStatus} from '../../redux/slices/userLoggedInSlice';
+import { updateLoginStatus,updateUserDetails } from '../../redux/slices/userLoggedInSlice';
 
 function Loginpage() {
   let [inputData, setData] = useState({
@@ -44,6 +44,7 @@ function Loginpage() {
 
       if (loginUser.data.success) {
         dispatch(updateLoginStatus(true));
+        dispatch(updateUserDetails(loginUser.data.user));
         navigate('/');
         toast.success(loginUser.data.message);
       }
@@ -152,9 +153,9 @@ function Loginpage() {
               Login
             </button>}
 
-            
-           
-            
+
+
+
 
 
             <div className="mt-4 flex justify-center">

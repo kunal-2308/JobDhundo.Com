@@ -6,7 +6,7 @@ import { USER_API_BASE_URL } from '@/utils/constant';
 
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoading } from '@/redux/slices/authSlice';
+import { setLoading } from '@/redux/slices/Loading';
 import { Loader2 } from 'lucide-react';
 
 function Signup() {

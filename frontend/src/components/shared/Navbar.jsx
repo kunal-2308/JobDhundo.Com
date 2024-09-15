@@ -1,20 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom";
-import { useSelector,useDispatch } from "react-redux";
-import { logoutUser } from "@/redux/slices/userLoggedInSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { updateLoginStatus } from "@/redux/slices/userLoggedInSlice";
+import { toast } from "sonner";
+
+
 function Navbar() {
-  const status = useSelector((state)=>state.uLogin.status);
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleLogout = (e) =>{
-    e.preventDefault();
-    dispatch(logoutUser());
+  let status = useSelector((state) => state.uLogin.status);
+  let user;
+  user = useSelector((state) => state.uLogin.user);
+
+
+
+  const handleLogout = async (e) => {
+    try {
+      e.preventDefault();
+      let response = await axios.get('http://localhost:8000/api/v1/user/logout', {
+        withCredentials: true // This ensures cookies (if any) are sent with the request
+      });
+
+      if (response.data.success) {
+        dispatch(updateLoginStatus(false));
+        localStorage.setItem('loginStatus', 'false');
+        localStorage.removeItem('userDetails');
+        toast.success(response.data.message);
+        navigate('/login');
+      }
+    } catch (error) {
+      toast.error(error.response ? error.response.data.message : "Error");
+    }
+    /*steps :
+    0. Hit the url of the logout
+    1. Status = false;
+    2. clear delete userDetails;
+    */
   }
+
   return (
     <>
       <div className="bg-white flex justify-between items-center mx-auto h-16 max-w-full px-20 border-b-2 border-red-700">
@@ -29,7 +58,7 @@ function Navbar() {
             <Link to='/jobs'><li className="cursor-pointer hover:border-b-2 border-red-700 text-black font-bold">Jobs</li></Link>
             <Link to='/browse'><li className="cursor-pointer hover:border-b-2 border-red-700 text-black font-bold">Browse</li></Link>
           </ul>
-          {status &&  <Popover>
+          {status && <Popover>
             <PopoverTrigger asChild>
               <Avatar className="cursor-pointer">
                 <AvatarImage
@@ -49,8 +78,8 @@ function Navbar() {
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold text-lg">Kunal Taware</p>
-                  <p className="font-medium text-xs text-slate-600">Experienced React Developer</p>
+                  <p className="font-semibold text-lg">{user.name}</p>
+                  <p className="font-medium text-xs text-slate-600">{user.profile.bio ? user.profile.bio : "No Bio"}</p>
                 </div>
               </div>
 
@@ -59,14 +88,14 @@ function Navbar() {
                   <User2 className="text-slate-600" />
                   <span className="font-semibold text-slate-800 hover:border-b-2 border-red-700 cursor-pointer ">View Profile</span>
                 </div>
-                <div className="div-min-1 flex my-0 mx-4 gap-3">
-                  <LogOut className="text-slate-600" /><span className="font-semibold text-slate-800  cursor-pointer hover:border-b-2 border-red-700" onClick={handleLogout}>Logout</span>
+                <div className="div-min-1 flex my-0 mx-4 gap-3" onClick={handleLogout} >
+                  <LogOut className="text-slate-600" /><span className="font-semibold text-slate-800  cursor-pointer hover:border-b-2 border-red-700">Logout</span>
                 </div>
               </div>
             </PopoverContent>
           </Popover>}
           {!status && <Link to="/login"><Button className="bg-red-800 text-white hover:shadow-2x hover:bg-red-900 font-semibold">Login / Signup</Button></Link>}
-         
+
         </div>
       </div>
     </>

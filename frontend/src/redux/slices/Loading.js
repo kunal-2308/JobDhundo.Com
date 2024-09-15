@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 let initialState = {
     loading:false,
 }
-const userAuthSlice = createSlice({
-    name:'authSlice',
+const userAuthLoadingSlice = createSlice({
+    name:'loadingSlice',
     initialState,
     reducers:{
         setLoading : (state,action)=>{
@@ -13,5 +13,5 @@ const userAuthSlice = createSlice({
     }
 });
 
-export const {setLoading} = userAuthSlice.actions;
-export default userAuthSlice.reducer;
+export const {setLoading} = userAuthLoadingSlice.actions;
+export default userAuthLoadingSlice.reducer;
