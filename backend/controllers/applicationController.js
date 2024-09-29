@@ -82,7 +82,7 @@ const getAllAppliedJobs = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: "Applied Jobs",
+            message: "Applied Jobs Found",
             applications,
             success: true,
         });

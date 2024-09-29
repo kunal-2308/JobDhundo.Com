@@ -2,29 +2,30 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User2 } from "lucide-react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { updateLoginStatus } from "@/redux/slices/userLoggedInSlice";
+import { updateLoginStatus} from "@/redux/slices/userLoggedInSlice";
 import { toast } from "sonner";
-
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  let status = useSelector((state) => state.uLogin.status);
-  let user;
-  user = useSelector((state) => state.uLogin.user);
+  // Subscribe to Redux store
+  const status = useSelector((state) => state.uLogin.status);
+  const user = useSelector((state) => state.uLogin.user);
 
-
+  useEffect(()=>{
+    console.log(user);
+  },[]);
 
   const handleLogout = async (e) => {
     try {
       e.preventDefault();
       let response = await axios.get('http://localhost:8000/api/v1/user/logout', {
-        withCredentials: true // This ensures cookies (if any) are sent with the request
+        withCredentials: true, // This ensures cookies (if any) are sent with the request
       });
 
       if (response.data.success) {
@@ -36,13 +37,11 @@ function Navbar() {
       }
     } catch (error) {
       toast.error(error.response ? error.response.data.message : "Error");
+      localStorage.removeItem('userDetails');
+      localStorage.removeItem('loginStatus');
+      navigate('/login');
     }
-    /*steps :
-    0. Hit the url of the logout
-    1. Status = false;
-    2. clear delete userDetails;
-    */
-  }
+  };
 
   return (
     <>
@@ -58,44 +57,61 @@ function Navbar() {
             <Link to='/jobs'><li className="cursor-pointer hover:border-b-2 border-red-700 text-black font-bold">Jobs</li></Link>
             <Link to='/browse'><li className="cursor-pointer hover:border-b-2 border-red-700 text-black font-bold">Browse</li></Link>
           </ul>
-          {status && <Popover>
-            <PopoverTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </PopoverTrigger>
-            <PopoverContent className="min-w-70 mx-5 h-50">
-              <div className="div-1-profile flex items-center justify-start gap-4 mx-2">
-                <Avatar>
+          {status && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Avatar className="cursor-pointer">
                   <AvatarImage
                     src="https://github.com/shadcn.png"
                     alt="@shadcn"
                   />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="font-semibold text-lg">{user.name}</p>
-                  <p className="font-medium text-xs text-slate-600">{user.profile.bio ? user.profile.bio : "No Bio"}</p>
+              </PopoverTrigger>
+              <PopoverContent className="min-w-70 mx-5 h-50">
+                <div className="div-1-profile flex items-center justify-start gap-4 mx-2">
+                  <Avatar>
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold text-lg">{user.name}</p>
+                    <p className="font-medium text-xs text-slate-600">
+                      {user.profile.bio ? user.profile.bio : "No Bio"}
+                     
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="div-2-profile flex flex-col border-t-2 mt-3 justify-start">
-                <div className="div-min-1 flex my-5 mx-4 gap-3">
-                  <User2 className="text-slate-600" />
-                  <span className="font-semibold text-slate-800 hover:border-b-2 border-red-700 cursor-pointer ">View Profile</span>
+                <div className="div-2-profile flex flex-col border-t-2 mt-3 justify-start">
+                  <div className="div-min-1 flex my-5 mx-4 gap-3">
+                    <User2 className="text-slate-600" />
+                    <Link to='/profile'>
+                      <span className="font-semibold text-slate-800 hover:border-b-2 border-red-700 cursor-pointer ">
+                        View Profile
+                      </span>
+                    </Link>
+                  </div>
+                  <div className="div-min-1 flex my-0 mx-4 gap-3" onClick={handleLogout}>
+                    <LogOut className="text-slate-600" />
+                    <span className="font-semibold text-slate-800 cursor-pointer hover:border-b-2 border-red-700">
+                      Logout
+                    </span>
+                  </div>
                 </div>
-                <div className="div-min-1 flex my-0 mx-4 gap-3" onClick={handleLogout} >
-                  <LogOut className="text-slate-600" /><span className="font-semibold text-slate-800  cursor-pointer hover:border-b-2 border-red-700">Logout</span>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>}
-          {!status && <Link to="/login"><Button className="bg-red-800 text-white hover:shadow-2x hover:bg-red-900 font-semibold">Login / Signup</Button></Link>}
-
+              </PopoverContent>
+            </Popover>
+          )}
+          {!status && (
+            <Link to="/login">
+              <Button className="bg-red-800 text-white hover:shadow-2x hover:bg-red-900 font-semibold">
+                Login / Signup
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </>

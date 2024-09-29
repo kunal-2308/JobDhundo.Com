@@ -2,8 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 let storedUser = localStorage.getItem("userDetails");
 let initialState = {
-  status: localStorage.getItem("loginStatus") === "true" ? true : false,
-  user: storedUser ? JSON.parse(storedUser) : {}, 
+  status: localStorage.getItem("loginStatus") === "true",
+  user: storedUser
+    ? JSON.parse(storedUser)
+    : {
+        name: "",
+        email: "",
+        profile: {
+          bio: "",
+          skills: [],
+        },
+        phone: "",
+      },
 };
 
 export const userLoggedInSlice = createSlice({
@@ -19,8 +29,26 @@ export const userLoggedInSlice = createSlice({
       // Store the user object in localStorage as a JSON string
       localStorage.setItem("userDetails", JSON.stringify(state.user));
     },
+    
+    clearUserDetails: (state) => {
+      state.user = {
+        name: "",
+        email: "",
+        profile: {
+          bio: "",
+          skills: [],
+        },
+        phone: "",
+      }; // Reset to initial structure
+      localStorage.removeItem("userDetails"); // Clear from localStorage
+    },
   },
 });
 
-export const { updateLoginStatus, updateUserDetails } = userLoggedInSlice.actions;
+
+// Export actions
+export const { updateLoginStatus, updateUserDetails, clearUserDetails } =
+  userLoggedInSlice.actions;
+
+// Export reducer
 export default userLoggedInSlice.reducer;

@@ -9,4 +9,5 @@ router.route('/login').post(login);
 router.route('/profile/update').patch(auth,updateUser);
 router.route('/logout').get(auth,logout);
 router.route('/delete/account').delete(auth,deleteUser);
+router.route('/add/user').post(auth);
 module.exports = router;

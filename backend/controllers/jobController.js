@@ -190,7 +190,35 @@ const updateJob = async(req,res) =>{
             success: false
         });
     }
-    
 }
 
-module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob, getAllJobPost};
+const getJobById = async (req, res) => {
+    try {
+        let jobId = req.params.id;
+        let jobDetails = await jobCollection.find({"_id":jobId},{applications:-1})
+            .populate({ path: 'company' })        
+            .populate({ path: 'contactPerson' });
+
+        if (!jobDetails) {
+            return res.status(404).json({
+                message: "Job not found",
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Job Found!",
+            success: true,
+            jobDetails
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message,
+            success: false
+        });
+    }
+};
+
+module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob, getAllJobPost,getJobById};

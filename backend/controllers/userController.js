@@ -162,14 +162,11 @@ const updateUser = async (req, res) => {
 
         //cloudinary setup :
 
-
-
         //Now the skills will be in string format: Convert it to array
         let skillsArray;
         if (skills) {
             skillsArray = skills.split(',');
         }
-
 
         //using middleware : Authentication
         let userId = req.id;
@@ -251,5 +248,6 @@ const deleteUser = async (req, res) => {
         });
     }
 }
+
 
 module.exports = { register, login, updateUser, logout, deleteUser };
