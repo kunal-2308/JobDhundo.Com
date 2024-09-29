@@ -34,7 +34,7 @@ function LatestOpenings() {
                 <span className="text-4xl font-bold">Job Openings</span>
                 <div className="mt-7 grid grid-rows-2 grid-cols-3 gap-8 mx-14">
                     {arrayList.length > 0 ? (
-                        arrayList.map((ele, index) => <Card jobDetails={ele} key={index} />)
+                        arrayList.slice(0, 6).map((ele, index) => <Card jobDetails={ele} key={index} />)
                     ) : (
                         <p>No job openings available</p>
                     )}

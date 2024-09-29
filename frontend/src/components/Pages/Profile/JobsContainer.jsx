@@ -1,15 +1,25 @@
+import React, { useEffect, useState } from 'react';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
 import axios from 'axios';
-import { XCircle } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 function JobsContainer() {
     const userData = useSelector((state) => state.uLogin.user);
     const role = userData.role;
     const [visible, setVisible] = useState(false);
     const [jobArray, setJobArr] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const jobsPerPage = 4; // Only show 4 jobs per page
 
     useEffect(() => {
         // Fetch applied jobs from the API
@@ -38,6 +48,14 @@ function JobsContainer() {
         fetchJobs();
     }, [role]);
 
+    // Calculate the jobs to display for the current page
+    const indexOfLastJob = currentPage * jobsPerPage;
+    const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+    const currentJobs = jobArray.slice(indexOfFirstJob, indexOfLastJob);
+
+    // Handle pagination change
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <>
             {visible ? (
@@ -48,7 +66,7 @@ function JobsContainer() {
                             <span className='text-black font-bold text-xl'>JOBS</span>
                         </div>
                         <div className="div-cards-section mt-3 pl-5 w-full">
-                            {jobArray.map((ele, index) => (
+                            {currentJobs.map((ele, index) => (
                                 <div className="card-container w-full h-auto flex justify-between items-center mt-3 hover:shadow-xl p-5 rounded-lg hover:cursor-pointer pr-5 transform transition-transform duration-300 hover:scale-105" key={index}>
                                     <div className="div-1-card-info flex justify-center items-center gap-x-5">
                                         <div className="img-logo-company">
@@ -61,8 +79,8 @@ function JobsContainer() {
                                             </Avatar>
                                         </div>
                                         <div className="content-card flex flex-col justify-start items-start">
-                                            <span className='text-xl font-bold text-black/80'>{ele.job.company.companyName}</span>
-                                            <span className='text-xs font-medium text-gray-500'>{ele.job.title}</span>
+                                            <span className='text-xl font-bold text-black/80'>{ele.job?.company?.companyName}</span>
+                                            <span className='text-xs font-medium text-gray-500'>{ele.job?.title}</span>
                                         </div>
                                     </div>
                                     <div className={`div-2-status flex justify-center items-center w-[90px] h-[30px] rounded-full ${ele.status === 'Pending' ? 'bg-yellow-400' : ele.status === 'Rejected' ? 'bg-red-700' : 'bg-green-600'}`}>
@@ -71,11 +89,34 @@ function JobsContainer() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Pagination Component */}
+                        <div className="mt-4">
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious href="#" onClick={() => paginate(currentPage - 1)} />
+                                    </PaginationItem>
+                                    {[...Array(Math.ceil(jobArray.length / jobsPerPage)).keys()].map((number) => (
+                                        <PaginationItem key={number + 1}>
+                                            <PaginationLink href="#" onClick={() => paginate(number + 1)} isActive={currentPage === number + 1}>
+                                                {number + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    <PaginationItem>
+                                        <PaginationNext href="#" onClick={() => paginate(currentPage + 1)} />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
                     </div>
                 </div>
-            ):""}
+            ) : (
+                ""
+            )}
         </>
-    )
+    );
 }
 
 export default JobsContainer;
