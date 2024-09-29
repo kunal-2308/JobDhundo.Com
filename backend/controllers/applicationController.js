@@ -72,7 +72,7 @@ const getAllAppliedJobs = async (req, res) => {
                 path: 'company',
                 options : {sort:{createdAt:-1}}
             }
-        });
+        }).sort({createdAt:-1});
 
         if (applications.length === 0) {
             return res.status(400).json({

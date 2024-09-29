@@ -195,7 +195,7 @@ const updateJob = async(req,res) =>{
 const getJobById = async (req, res) => {
     try {
         let jobId = req.params.id;
-        let jobDetails = await jobCollection.find({"_id":jobId},{applications:-1})
+        let jobDetails = await jobCollection.findById({"_id":jobId})
             .populate({ path: 'company' })        
             .populate({ path: 'contactPerson' });
 

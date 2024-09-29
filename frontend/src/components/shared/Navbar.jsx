@@ -17,9 +17,6 @@ function Navbar() {
   const status = useSelector((state) => state.uLogin.status);
   const user = useSelector((state) => state.uLogin.user);
 
-  useEffect(()=>{
-    console.log(user);
-  },[]);
 
   const handleLogout = async (e) => {
     try {
@@ -32,6 +29,7 @@ function Navbar() {
         dispatch(updateLoginStatus(false));
         localStorage.setItem('loginStatus', 'false');
         localStorage.removeItem('userDetails');
+        localStorage.removeItem('jobList');
         toast.success(response.data.message);
         navigate('/login');
       }

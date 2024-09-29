@@ -18,9 +18,6 @@ function MainContainer() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log(userData);
-    }, [userData]);
 
     let [newupdatedUser, setUpdatedUser] = useState({
         name: userData?.name || "",
