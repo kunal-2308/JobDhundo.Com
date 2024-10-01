@@ -43,7 +43,7 @@ function Navbar() {
 
   return (
     <>
-      <div className="bg-white flex justify-between items-center mx-auto h-16 max-w-full px-20 border-b-2 border-red-700">
+      <div className="bg-white flex justify-between items-center mx-auto h-16 max-w-full px-20 border-b-2 border-red-700 sticky top-0 z-50">
         <div className="div-1">
           <span className="text-2xl font-bold text-black">Job</span>
           <span className="text-2xl font-bold text-red-700">Dhundo</span>

@@ -34,7 +34,7 @@ function CarouselSection() {
                                 <div className="p-1">
                                     <form onSubmit={(e)=>{
                                         e.preventDefault();
-                                        navigate(`/?searchBar=${ele}`);
+                                        navigate(`/browse/?keyword=${ele}`);
                                     }}>
                                     <Button className="w-full flex items-center justify-center text-center p-4 rounded-full bg-white text-black hover:bg-red-800 hover:cursor-pointer border-[1px] border-slate-300 font-semibold hover:text-white hover:border-none" name="searchBar">
                                         {ele}

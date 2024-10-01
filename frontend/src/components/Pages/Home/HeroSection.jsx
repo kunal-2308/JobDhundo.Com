@@ -1,7 +1,20 @@
 import { Search } from 'lucide-react'
-import React from 'react'
-
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 function HeroSection() {
+  let navigate = useNavigate();
+  
+  let [keyword,setKeyword] = useState('');
+  let handleInputChange = (e) =>{
+    setKeyword(e.target.value)
+  }
+
+  let handleSubmit = (e) =>{
+    e.preventDefault();
+    navigate(`/browse/?keyword=${keyword}`);
+  }
+
+  
   return (
     <>
       <div className="div-main-container flex flex-col justify-center items-center mt-24 gap-5">
@@ -21,14 +34,16 @@ function HeroSection() {
           <form className="flex w-full h-full">
             <input
               type="text"
-              name="searchBar"
-              id="searchBar"
+              name="keyword"
+              id="keyword"
               className="w-[400px] h-full bg-white rounded-l-full p-4 focus:outline-none"
               placeholder="Search jobs..."
+              onChange={handleInputChange}
             />
             <button
               type="submit"
               className="w-[80px] h-full bg-red-800 flex justify-center items-center rounded-r-full hover:bg-red-900"
+              onClick={handleSubmit}
             >
               <Search className='text-white font-semibold text-lg'></Search>
             </button>
