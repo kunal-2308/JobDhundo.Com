@@ -149,6 +149,76 @@ const getAllJobPost = async (req, res) => {
     }
 }
 
+const getJobs = async(req,res)=>{
+    try {
+        // Extract search filters from query params
+        let keyword = req.query.keyword || "";
+        let location = req.query.location || "";
+        let role = req.query.role || "";
+        let jobType = req.query.jobType || "";
+
+        // Create a base query with the keyword search
+        let query = {
+            $and: [
+                {
+                    $or: [
+                        { "title": { $regex: keyword, $options: "i" } },
+                        { "description": { $regex: keyword, $options: "i" } },
+                        { "category": { $regex: keyword, $options: "i" } },
+                        { "requirements": { $regex: keyword, $options: "i" } },
+                    ]
+                }
+            ]
+        };
+
+        // Add location filter if provided
+        if (location !== "" && location !== "All") {
+            query.$and.push({ "location": { $regex: location, $options: "i" } });
+        }
+
+        // Add role filter if provided
+        if (role !== "" && role !== "All") {
+            query.$and.push({ "title": { $regex: role, $options: "i" } });
+        }
+
+        // Add job type filter if provided
+        if (jobType !== "" && jobType !== "All") {
+            query.$and.push({ "jobType": { $regex: jobType, $options: "i" } });
+        }
+
+        // Fetch the filtered job listings
+        const jobList = await jobCollection.find(query)
+            .populate({
+                path: "company",
+                select: "companyName website description", // Specify which fields to populate
+            })
+            .populate({ path: 'contactPerson' })
+            .sort({ createdAt: -1 });
+
+        // If no jobs match the filters, return a 404 response
+        if (jobList.length === 0) {
+            return res.status(404).json({
+                message: "No jobs match your search criteria",
+                success: false,
+            });
+        }
+
+        // Return the matched job list
+        return res.status(200).json({
+            message: "Job match(es) found",
+            success: true,
+            jobList
+        });
+    } catch (error) {
+        // Handle server error
+        return res.status(500).json({
+            message: "Server Error",
+            success: false,
+            error: error.message
+        });
+    }
+}
+
 
 const updateJob = async(req,res) =>{
     try {
@@ -221,4 +291,4 @@ const getJobById = async (req, res) => {
     }
 };
 
-module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob, getAllJobPost,getJobById};
+module.exports = { postJob, getallAdminPost, getAllStudentPost,updateJob, getAllJobPost,getJobById,getJobs};
